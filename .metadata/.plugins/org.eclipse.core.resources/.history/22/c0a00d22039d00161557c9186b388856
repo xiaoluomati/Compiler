@@ -1,0 +1,26 @@
+package lexer.fa;
+
+import java.util.Vector;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		Vector<StateGroup> groups = new Vector<>();
+		groups.addElement(new StateGroup(this.endState));
+		StateGroup nF = new StateGroup();
+		for (State state : this.states) {
+			if(!state.isEndState()){
+				nF.add(state);
+			}
+		}
+		groups.addElement(nF);
+		
+		
+		return null;
+	}
+
+}

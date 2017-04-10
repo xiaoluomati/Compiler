@@ -1,0 +1,5 @@
+<ID,x>
+<OPERATION,+>
+<ID,x2>
+<OPERATION,×>
+<ID,ws>

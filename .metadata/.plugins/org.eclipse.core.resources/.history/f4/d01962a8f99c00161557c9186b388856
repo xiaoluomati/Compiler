@@ -1,0 +1,13 @@
+package lexer.fa;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		return null;
+	}
+
+}

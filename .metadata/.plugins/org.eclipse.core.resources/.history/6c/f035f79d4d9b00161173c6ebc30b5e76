@@ -1,0 +1,36 @@
+package lexer.fa;
+
+import java.util.Vector;
+
+public class FA {
+
+	private Vector<State> states;
+	
+	private Vector<Edge> edges;
+	
+	private State startState;
+	
+	private Vector<State> endStates;
+	
+	public FA(State startState) {
+		this.startState = startState;
+		this.states = new Vector<>();
+		this.edges = new Vector<>();
+		this.endStates = new Vector<>();
+		this.addState(startState);
+	}
+	
+	public void addState(State state) {
+		if(states.contains(state)){
+			return;
+		}
+		states.addElement(state);
+		if (state.isEndState()) {
+			endStates.addElement(state);
+		}
+		for (Edge edge : state.getEdgesStart()) {
+			
+		}
+	}
+	
+}

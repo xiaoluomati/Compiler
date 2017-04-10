@@ -1,0 +1,41 @@
+package lexer.fa;
+
+import java.util.List;
+import java.util.Vector;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		Vector<StateGroup> groups = new Vector<>();
+		groups.addElement(new StateGroup(this.endState));
+		StateGroup nF = new StateGroup();
+		for (State state : this.states) {
+			if(!state.isEndState()){
+				nF.add(state);
+			}
+		}
+		groups.addElement(nF);
+		
+		while (!isSeparable(groups)) {
+			int[] arr = StateGroup.getStatePos(groups, stateGroup);
+		}
+		
+		return null;
+	}
+	
+	private boolean isSeparable(List<StateGroup> stateGroups){
+		for (StateGroup stateGroup : stateGroups) {
+			int[] arr = StateGroup.getStatePos(stateGroups, stateGroup);
+			for (int i : arr) {
+				if(arr[0] != arr[i])
+					return true;
+			}
+		}
+		return false;
+	}
+	
+}

@@ -1,0 +1,15 @@
+package lexer.fa;
+
+import java.util.Vector;
+
+public class FA {
+
+	private Vector<State> states;
+	
+	private Vector<Edge> edges;
+	
+	private State startState;
+	
+	private Vector<State> endStates;
+	
+}

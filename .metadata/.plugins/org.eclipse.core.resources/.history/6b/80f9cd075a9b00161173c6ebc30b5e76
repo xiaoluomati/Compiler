@@ -1,0 +1,117 @@
+package lexer.fa;
+
+import java.util.List;
+import java.util.Vector;
+
+public class FA {
+
+	private Vector<State> states;
+	
+	private Vector<Edge> edges;
+	
+	private State startState;
+	
+	public static void main(String[] args) {
+		State A = new State("A");
+		State B = new State("B");
+		State C = new State("C");
+		State D = new State("D");
+		State E = new State("E", true);
+		new Edge("a", A, B);
+		new Edge("b", A, C);
+		new Edge("a", B, B);
+		new Edge("b", B, D);
+		new Edge("a", C, B);
+		new Edge("b", C, C);
+		new Edge("a", D, B);
+		new Edge("b", D, E);  
+		new Edge("a", E, A);
+		new Edge("b", E, B);
+		FA dFa = new FA(A);
+		for (Edge edge : dFa.edges) {
+			System.out.println(edge);
+		}
+		System.out.println("#################");
+		State newState = A.merge(C);
+		newState.printAboutEdge();
+		System.out.println("#################");
+		dFa.deleteState(C);
+		dFa.deleteState(A);
+		dFa.addState(newState);
+		dFa.setStartState(newState);
+		for (Edge edge : dFa.edges) {
+			System.out.println(edge);
+		}
+	}
+	
+	public FA(State startState) {
+		this.startState = startState;
+		this.states = new Vector<>();
+		this.edges = new Vector<>();
+		this.addState(startState);
+	}
+	
+	public void addState(State state) {
+		if(states.contains(state)){
+			return;
+		}
+		states.addElement(state);
+		List<State> states2 = new Vector<>();
+		for (Edge edge : state.getEdgesStart()) {
+			if (!edges.contains(edge)) {
+				edges.addElement(edge);
+			}
+			System.err.println(edge);
+			states2.add(edge.getEnd());
+		}
+//		System.err.println();
+		for (State state2 : states2) {
+			addState(state2);
+		}
+	}
+	
+	public void deleteState(State state) {
+		if(state.equals(startState)){
+			startState = null;
+		}
+		if(!states.contains(state))
+			return;
+		states.remove(state);
+		List<Edge> temp = new Vector<>();
+		for (Edge edge : edges) {
+			if(edge.getStart().equals(state) || edge.getEnd().equals(state)){
+				temp.add(edge);
+			}
+		}
+		for (Edge edge : temp) {
+			edges.remove(edge);
+		}
+		for (State state1 : states) {
+			for (Edge edge : state1.getAboutEdge()) {
+				if(edge.getStart().equals(state) || edge.getEnd().equals(state)){
+					state1.delEndEdge(edge);
+					state1.delStartEdge(edge);
+				}
+			}
+		}
+	}
+
+	public State getStartState() {
+		return startState;
+	}
+	
+	public void setStartState(State startState) {
+		if(startState == null)
+			this.startState = startState;
+	}
+
+	public List<State> getEndState() {
+		List<State> result = new Vector<>();
+		for (State state : states) {
+			if(state.isEndState())
+				result.add(state);
+		}
+		return result;
+	}
+	
+}

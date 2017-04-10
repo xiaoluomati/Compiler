@@ -1,0 +1,5 @@
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
+>>>>>>>=77a22886e20c2067e4a73ddc23bde9d174b356cd
+eclipse.preferences.version=1
+noninteresting_thread_filter=java.*,org.eclipse.core.internal.jobs.Worker.run,org.eclipse.core.internal.jobs.WorkerPool.sleep,org.eclipse.core.internal.jobs.WorkerPool.startJob,org.eclipse.equinox.internal.util.impl.tpt.threadpool.Executor.run,org.eclipse.equinox.internal.util.impl.tpt.timer.TimerImpl.run,org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.getNextEvent,org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run,sun.*

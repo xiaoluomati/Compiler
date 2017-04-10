@@ -1,0 +1,26 @@
+package lexer.fa;
+
+public class NFA extends FA{
+	
+
+
+	public NFA(State startState) {
+		super(startState);
+	}
+
+	public static NFA getNFAOfSingleChar(char c) {
+		State s = new State(0+"");
+		State e = new State(1+"", true);
+		new Edge(c+"", s, e);
+		return new NFA(s);
+	}
+	
+	public static NFA getLinkNFA(NFA nfa1, NFA nfa2) {
+		State s = new State(0+"");
+		int i = 1;
+		for (State state : nfa1.getStates()) {
+			state.setIdentity(i+"");
+			i++;
+		}
+	}
+}

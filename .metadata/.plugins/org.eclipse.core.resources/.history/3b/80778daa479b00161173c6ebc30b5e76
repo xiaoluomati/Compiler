@@ -1,0 +1,71 @@
+package lexer.fa;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+public class State {
+
+	private String identity;
+	
+	private Vector<Edge> edgesStart;
+	
+	private Vector<Edge> edgesEnd;
+
+	public State(String identity) {
+		super();
+		this.identity = identity;
+		this.edgesStart = new Vector<>();
+		this.edgesEnd = new Vector<>();
+	}
+
+	public String getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(String identity) {
+		this.identity = identity;
+	}
+	
+	public void addStartEdge(Edge edge){
+		edgesStart.addElement(edge);
+	}
+	
+	public void addEndEdge(Edge edge) {
+		edgesEnd.addElement(edge);
+	}
+	
+	public static State mergeAll(List<State> states) {
+		if(states.isEmpty())
+			return null;
+		State result = new State(states.get(0).identity);
+		for (State state : states) {
+			for (Edge edge : state.edgesEnd) {
+				new Edge(edge.getInput(), edge.getStart(), result);
+			}
+		}
+		return result;
+	}
+	
+	public State merge(State state) {
+		State result = new State(identity);
+		for (Edge edge : state.edgesEnd) {
+			new Edge(edge.getInput(), edge.getStart(), result);
+		}
+		for (Edge edge : edgesEnd) {
+			new Edge(edge.getInput(), edge.getStart(), result);
+		}
+		return result;
+	}
+	
+	public List<State> getStatesByOneInput(String input){
+		List<State> states = new Vector<>();
+		for (Edge edge : edgesStart) {
+			if(edge.getInput().equals(input)){
+				states.add(edge.getEnd());
+			}
+		}
+		return states;
+	}
+	
+}

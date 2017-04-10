@@ -1,0 +1,102 @@
+package lexer.fa;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import lexer.Tool;
+
+public class StateGroup implements Iterable<State>{
+	
+	private List<State> states;
+	
+	public StateGroup() {
+		setStates(new Vector<>());
+	}
+	
+	public StateGroup(List<State> datas){
+		setStates(datas);
+	}
+	
+	public void add(State state){
+		if(!getStates().contains(state)){
+			getStates().add(state);
+		}
+	}
+	
+	public void add(StateGroup set){
+		for (State state : set) {
+			if(!getStates().contains(state)){
+				getStates().add(state);
+			}
+		}
+	}
+	
+	public static int[] getStatePos(List<StateGroup> stateGroups, StateGroup group) {
+		int[] arr = new int[group.getStates().size()];
+		int k = 0;
+		for (State state : group) {
+			for (int i = 0; i < stateGroups.size(); i++) {
+				if(stateGroups.get(i).getStates().contains(state)){
+					arr[k] = i;
+					break;
+				}
+			}
+			k++;
+		}
+		
+		return arr;
+	}
+	
+	public StateGroup trans(String input) {
+		StateGroup stateGroup = new StateGroup();
+		for (State state : states) {
+			Tool.printline();
+			for (Edge edge : state.getEdgesStart()) {
+				if(edge.getInput().equals(input)){
+					stateGroup.add(edge.getEnd());
+					System.err.println(state + "->" + edge.getEnd());
+					
+					break;
+				}
+			}
+			
+		}
+		return stateGroup;
+	}
+	
+	public boolean isSubSetOf(StateGroup set){
+		for (State state : getStates()) {
+			if(!set.getStates().contains(state))
+				return false;
+		}
+		return true;
+	}
+	
+	public void print(){
+		for (State state : getStates()) {
+			System.out.print(state+" ");
+		}
+		System.out.println();
+		Tool.printline();
+	}
+
+	@Override
+	public Iterator<State> iterator() {
+		return getStates().iterator();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		StateGroup set = (StateGroup) obj;
+		return set.isSubSetOf(this) && this.isSubSetOf(set);
+	}
+
+	public List<State> getStates() {
+		return states;
+	}
+
+	public void setStates(List<State> states) {
+		this.states = states;
+	}
+}

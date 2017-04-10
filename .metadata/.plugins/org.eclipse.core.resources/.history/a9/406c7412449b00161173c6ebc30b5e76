@@ -1,0 +1,26 @@
+package lexer.fa;
+
+public class Edge {
+	
+	private static final String EMPTY_STRING = "";
+
+	private String input;
+	
+	private State start;
+	
+	private State end;
+
+	public Edge(State start, State end) {
+		this(EMPTY_STRING, start, end);
+	}
+
+	public Edge(String input, State start, State end) {
+		super();
+		this.input = input;
+		this.start = start;
+		this.end = end;
+	}
+	
+	
+	
+}

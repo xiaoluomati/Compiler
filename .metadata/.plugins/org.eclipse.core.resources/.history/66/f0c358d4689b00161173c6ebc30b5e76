@@ -1,0 +1,12 @@
+package lexer.fa;
+
+public class NFA extends FA{
+
+	public static final NFA SINGLE_CHAR;
+	
+	static{
+		SINGLE_CHAR = new NFA();
+		State s = new State(0+"");
+	}
+	
+}

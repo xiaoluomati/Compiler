@@ -1,0 +1,81 @@
+package lexer.fa;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		Vector<StateGroup> groups = new Vector<>();
+		groups.addElement(new StateGroup(this.endState));
+		StateGroup nF = new StateGroup();
+		for (State state : this.states) {
+			if(!state.isEndState()){
+				nF.add(state);
+			}
+		}
+		groups.addElement(nF);
+		
+		while (!isSeparable(groups)) {
+			StateGroup stateGroup = this.getNextSeparable(groups);
+			for (String input : this.getInputs()) {
+				if(isSeparable(groups, stateGroup, input)){
+					int[] arr = StateGroup.getStatePos(groups, stateGroup.trans(input));
+					HashMap<Integer, StateGroup> map = new HashMap<>();
+					for (int i = 0; i < arr.length; i++) {
+						if(map.keySet().contains(arr[i])){
+							map.get(arr[i]).add(stateGroup.getStates().get(i));
+						}else{
+							map.put(arr[i], new StateGroup());
+						}
+					}
+				}
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	private boolean isSeparable(List<StateGroup> stateGroups){
+		for (StateGroup stateGroup : stateGroups) {
+			if(this.isSeparable(stateGroups, stateGroup))
+				return true;
+		}
+		return false;
+	}
+	
+	
+	private boolean isSeparable(List<StateGroup> stateGroups,StateGroup stateGroup){
+		for (String input : this.getInputs()) {
+			if(isSeparable(stateGroups, stateGroup, input))
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean isSeparable(List<StateGroup> stateGroups,StateGroup stateGroup,String input){
+		if(stateGroup.getStates().size() == 1)
+			return false;
+		int[] arr = StateGroup.getStatePos(stateGroups, stateGroup.trans(input));
+		for (int i : arr) {
+			if(arr[0] != arr[i])
+				return true;
+		}
+		return false;
+	}
+	
+	private StateGroup getNextSeparable(List<StateGroup> stateGroups){
+		for (StateGroup stateGroup : stateGroups) {
+			if (isSeparable(stateGroups, stateGroup)) {
+				return stateGroup;
+			}
+		}
+		return null;
+	}
+}

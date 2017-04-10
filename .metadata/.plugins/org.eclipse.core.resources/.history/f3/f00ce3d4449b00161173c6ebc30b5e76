@@ -1,0 +1,50 @@
+package lexer.fa;
+
+public class Edge {
+	
+	private static final String EMPTY_STRING = "";
+
+	private String input;
+	
+	private State start;
+	
+	private State end;
+
+	public Edge(State start, State end) {
+		this(EMPTY_STRING, start, end);
+	}
+
+	public Edge(String input, State start, State end) {
+		super();
+		this.input = input;
+		this.start = start;
+		this.end = end;
+	}
+
+	public String getInput() {
+		return input;
+	}
+
+	public void setInput(String input) {
+		this.input = input;
+	}
+
+	public State getStart() {
+		return start;
+	}
+
+	public void setStart(State start) {
+		this.start = start;
+	}
+
+	public State getEnd() {
+		return end;
+	}
+
+	public void setEnd(State end) {
+		this.end = end;
+	}
+	
+	
+	
+}

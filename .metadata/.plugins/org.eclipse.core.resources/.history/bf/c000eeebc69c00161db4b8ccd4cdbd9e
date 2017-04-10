@@ -1,0 +1,127 @@
+package lexer.fa;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import lexer.Tool;
+
+public class NFAConverter {
+	
+	private NFA nfa;
+	
+	public NFAConverter(NFA nfa) {
+		this.nfa = nfa;
+	}
+
+	public DFA toDFA() {
+		return null;
+	}
+	
+//	public static void main(String[] args) {
+//		NFA nfa = REConverter.REtoNFA("(a|b)*abb");
+//		NFAConverter nfaConverter = new NFAConverter(nfa);
+//		nfa.print();
+//		NFAStatesSet set = nfaConverter.esClosure(nfaConverter.nfa.startState);
+//		nfaConverter.move(set, "a").print();
+//	}
+	
+	protected NFAStatesSet move(NFAStatesSet set, String input){
+		if(input == null || input.equals(Edge.EMPTY_STRING))
+			return null;
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		for (State state : set) {
+			nfaStatesSet.add(new NFAStatesSet(state.getStatesByOneInput(input)));
+		}
+		return nfaStatesSet;	
+	}
+	
+	protected NFAStatesSet esClosure(NFAStatesSet set){
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		for (State state : nfaStatesSet) {
+			nfaStatesSet.add(esClosure(state));
+		}
+		return nfaStatesSet;
+	}
+	
+	protected NFAStatesSet esClosure(State state){
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		nfaStatesSet.add(state);
+		while(!isComplete(nfaStatesSet)){
+			NFAStatesSet set = new NFAStatesSet();
+			for (State state2 : nfaStatesSet) {
+				set.add(new NFAStatesSet(state2.getStatesByOneInput(Edge.EMPTY_STRING)));
+			}
+			nfaStatesSet.add(set);
+		}
+		return nfaStatesSet;
+	}
+	
+	private boolean isComplete(NFAStatesSet set){
+		for (State state : set) {
+			NFAStatesSet set2 = new NFAStatesSet(state.getStatesByOneInput(Edge.EMPTY_STRING));
+			if(!set2.isSubSetOf(set))
+				return false;
+		}
+		return true;
+	}
+	
+//	private NFAStatesSet esClosureOneStep(State state) {
+//		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+//		for (Edge edge : state.getEdgesStart()) {
+//			if(edge.getInput().equals(Edge.EMPTY_STRING)){
+//				nfaStatesSet.add(edge.getEnd());
+//			}
+//		}
+//		return nfaStatesSet;
+//	}
+	
+	class NFAStatesSet implements Iterable<State>{
+		
+		List<State> states;
+		
+		NFAStatesSet() {
+			states = new Vector<>();
+		}
+		
+		NFAStatesSet(List<State> datas){
+			states = datas;
+		}
+		
+		void add(State state){
+			if(!states.contains(state)){
+				states.add(state);
+			}
+		}
+		
+		void add(NFAStatesSet set){
+			for (State state : set) {
+				if(!states.contains(state)){
+					states.add(state);
+				}
+			}
+		}
+		
+		boolean isSubSetOf(NFAStatesSet set){
+			for (State state : states) {
+				if(!set.states.contains(state))
+					return false;
+			}
+			return true;
+		}
+		
+		void print(){
+			for (State state : states) {
+				System.out.println(state);
+			}
+			Tool.printline();
+		}
+
+		@Override
+		public Iterator<State> iterator() {
+			return states.iterator();
+		}
+		
+	}
+	
+}

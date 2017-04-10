@@ -1,0 +1,189 @@
+package lexer.fa;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import lexer.Tool;
+import lexer.re.REConverter;
+
+public class NFAConverter {
+	
+	private NFA nfa;
+	
+	public NFAConverter(NFA nfa) {
+		this.nfa = nfa;
+	}
+	
+	public static void main(String[] args) {
+		NFA nfa = REConverter.REtoNFA("(a|b)*abb");
+		NFAConverter nfaConverter = new NFAConverter(nfa);
+		DFA dfa = nfaConverter.toDFA();
+		dfa.print();
+	}
+
+	public DFA toDFA() {
+		Vector<DState> dStates = new Vector<>();
+		int i = 0;
+		State s =  new State((i++)+"");
+		dStates.addElement(new DState(s, esClosure(nfa.startState)));
+		List<String> inputs = nfa.getInputs();
+		while(existNotMarked(dStates)){
+			DState dState = findFirstNotMarked(dStates);
+			dState.isMarked = true;
+			for (String input : inputs) {
+				DState dState2 = new DState(new State(i+""), esClosure(move(dState.set, input)));
+				if(!dStates.contains(dState2)){
+					dStates.addElement(dState2);
+					i++;
+				}
+				new Edge(input, dState.state, dState2.state);
+			}
+		}
+		for (DState dState : dStates) {
+			if(dState.set.states.contains(nfa.getNFAEndState())){
+				dState.state.setEndState(true);
+			}
+		}
+		return new DFA(s);
+	}
+	
+	private boolean isInDstates(List<DState> dList, DState dState){
+		for (DState dState1 : dList) {
+			if(dState1.equals(dState))
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean existNotMarked(List<DState> dList){
+		for (DState dState : dList) {
+			if(!dState.isMarked)
+				return false;
+		}
+		return true;
+	}
+	
+	private DState findFirstNotMarked(List<DState> dList){
+		if(!existNotMarked(dList))
+			return null;
+		DState dS = null;
+		for (DState dState : dList) {
+			if(!dState.isMarked){
+				dS = dState;
+				break;
+			}
+		}
+		return dS;
+	}
+	
+	private NFAStatesSet move(NFAStatesSet set, String input){
+		if(input == null || input.equals(Edge.EMPTY_STRING))
+			return null;
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		for (State state : set) {
+			nfaStatesSet.add(new NFAStatesSet(state.getStatesByOneInput(input)));
+		}
+		return nfaStatesSet;	
+	}
+	
+	private NFAStatesSet esClosure(NFAStatesSet set){
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		for (State state : nfaStatesSet) {
+			nfaStatesSet.add(esClosure(state));
+		}
+		return nfaStatesSet;
+	}
+	
+	private NFAStatesSet esClosure(State state){
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		nfaStatesSet.add(state);
+		while(!isComplete(nfaStatesSet)){
+			NFAStatesSet set = new NFAStatesSet();
+			for (State state2 : nfaStatesSet) {
+				set.add(new NFAStatesSet(state2.getStatesByOneInput(Edge.EMPTY_STRING)));
+			}
+			nfaStatesSet.add(set);
+		}
+		return nfaStatesSet;
+	}
+	
+	private boolean isComplete(NFAStatesSet set){
+		for (State state : set) {
+			NFAStatesSet set2 = new NFAStatesSet(state.getStatesByOneInput(Edge.EMPTY_STRING));
+			if(!set2.isSubSetOf(set))
+				return false;
+		}
+		return true;
+	}
+	
+	class DState{
+
+		State state;
+		
+		boolean isMarked;
+		
+		NFAStatesSet set;
+		
+		DState(State state, NFAStatesSet set) {
+			this.state = state;
+			this.set = set;
+			this.isMarked = false;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			return set.equals(((DState)obj).set);
+		}
+		
+	}
+	
+	class NFAStatesSet implements Iterable<State>{
+		
+		List<State> states;
+		
+		NFAStatesSet() {
+			states = new Vector<>();
+		}
+		
+		NFAStatesSet(List<State> datas){
+			states = datas;
+		}
+		
+		void add(State state){
+			if(!states.contains(state)){
+				states.add(state);
+			}
+		}
+		
+		void add(NFAStatesSet set){
+			for (State state : set) {
+				if(!states.contains(state)){
+					states.add(state);
+				}
+			}
+		}
+		
+		boolean isSubSetOf(NFAStatesSet set){
+			for (State state : states) {
+				if(!set.states.contains(state))
+					return false;
+			}
+			return true;
+		}
+		
+		void print(){
+			for (State state : states) {
+				System.out.println(state);
+			}
+			Tool.printline();
+		}
+
+		@Override
+		public Iterator<State> iterator() {
+			return states.iterator();
+		}
+		
+	}
+	
+}

@@ -1,0 +1,10 @@
+package lexer.fa;
+
+public class NFA extends FA{
+
+	public NFA(State startState) {
+		super(startState);
+		// TODO Auto-generated constructor stub
+	}
+
+}

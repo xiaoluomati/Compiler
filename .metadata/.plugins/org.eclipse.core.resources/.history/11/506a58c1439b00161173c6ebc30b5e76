@@ -1,0 +1,7 @@
+package lexer.fa;
+
+public class Edge {
+
+	private String input;
+	
+}

@@ -1,0 +1,42 @@
+package lexer.fa;
+
+import java.util.Vector;
+
+public class State {
+
+	private String identity;
+	
+	private Vector<Edge> edgesStart;
+	
+	private Vector<Edge> edgesEnd;
+
+	public State(String identity) {
+		super();
+		this.identity = identity;
+		this.edgesStart = new Vector<>();
+		this.edgesEnd = new Vector<>();
+	}
+
+	public String getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(String identity) {
+		this.identity = identity;
+	}
+	
+	public void addStartEdge(Edge edge){
+		edgesStart.addElement(edge);
+	}
+	
+	public void addEndEdge(Edge edge) {
+		edgesEnd.addElement(edge);
+	}
+	
+	public State merge(State state) {
+		State result = new State(identity);
+		
+		return null;
+	}
+	
+}

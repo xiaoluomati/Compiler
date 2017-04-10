@@ -1,0 +1,64 @@
+package lexer.fa;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		return null;
+	}
+	
+	class StateGroup implements Iterable<State>{
+		
+		List<State> states;
+		
+		StateGroup() {
+			states = new Vector<>();
+		}
+		
+		void add(State state){
+			if(!states.contains(state)){
+				states.add(state);
+			}
+		}
+		
+		StateGroup trans(String input){
+			StateGroup stateGroup = new StateGroup();
+			for (State state : states) {
+				for (Edge edge : state.getEdgesStart()) {
+					if(edge.getInput().equals(input)){
+						stateGroup.add(edge.getEnd());
+						break;
+					}
+				}
+			}
+			return stateGroup;
+		}
+		
+		boolean isSubSetOf(StateGroup set){
+			for (State state : states) {
+				if(!set.states.contains(state))
+					return false;
+			}
+			return true;
+		}
+
+		@Override
+		public Iterator<State> iterator() {
+			return states.iterator();
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			StateGroup set = (StateGroup) obj;
+			return set.isSubSetOf(this) && this.isSubSetOf(set);
+		}
+	}
+
+}

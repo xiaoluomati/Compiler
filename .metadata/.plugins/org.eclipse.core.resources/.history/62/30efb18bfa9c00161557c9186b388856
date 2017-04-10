@@ -1,0 +1,45 @@
+package lexer.fa;
+
+import java.util.List;
+import java.util.Vector;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		return null;
+	}
+	
+	class StateGroup{
+		
+		List<State> states;
+		
+		StateGroup() {
+			states = new Vector<>();
+		}
+		
+		void add(State state){
+			if(!states.contains(state)){
+				states.add(state);
+			}
+		}
+		
+		
+		StateGroup trans(String input){
+			StateGroup stateGroup = new StateGroup();
+			for (State state : states) {
+				for (Edge edge : state.getEdgesStart()) {
+					if(edge.getInput().equals(input)){
+						stateGroup.add(edge.getEnd());
+						break;
+					}
+				}
+			}
+			return stateGroup;
+		}
+	}
+
+}

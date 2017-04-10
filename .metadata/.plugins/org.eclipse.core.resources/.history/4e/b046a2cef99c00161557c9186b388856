@@ -1,0 +1,26 @@
+package lexer.fa;
+
+import java.util.List;
+import java.util.Vector;
+
+public class DFA extends FA{
+
+	public DFA(State startState) {
+		super(startState);
+	}
+	
+	public DFA minStates(){
+		return null;
+	}
+	
+	class StateGroup{
+		
+		List<State> states;
+		
+		StateGroup() {
+			states = new Vector<>();
+		}
+		
+	}
+
+}

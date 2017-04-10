@@ -1,0 +1,84 @@
+package lexer.fa;
+
+import java.util.List;
+import java.util.Vector;
+
+public class FA {
+
+	private Vector<State> states;
+	
+	private Vector<Edge> edges;
+	
+	private State startState;
+	
+	public static void main(String[] args) {
+		State A = new State("A");
+		State B = new State("B");
+		State C = new State("C");
+		State D = new State("D");
+		State E = new State("E", true);
+		new Edge("a", A, B);
+		new Edge("b", A, C);
+		new Edge("a", B, B);
+		new Edge("b", B, D);
+		new Edge("a", C, B);
+		new Edge("b", C, C);
+		new Edge("a", D, B);
+		new Edge("b", D, E);  
+		new Edge("a", E, A);
+		new Edge("b", E, C);
+		FA dFa = new FA(A);
+		
+	}
+	
+	public FA(State startState) {
+		this.startState = startState;
+		this.states = new Vector<>();
+		this.edges = new Vector<>();
+		this.addState(startState);
+	}
+	
+	public void addState(State state) {
+		if(states.contains(state)){
+			return;
+		}
+		states.addElement(state);
+		List<State> states2 = new Vector<>();
+		for (Edge edge : state.getEdgesStart()) {
+			if (!edges.contains(edge)) {
+				edges.addElement(edge);
+			}
+			states2.add(edge.getEnd());
+		}
+		for (State state2 : states2) {
+			addState(state2);
+		}
+	}
+	
+	public void deleteState(State state) {
+		if(state.equals(startState))
+			return;
+		if(!states.contains(state))
+			return;
+		states.remove(state);
+		for (Edge edge : edges) {
+			if(edge.getStart().equals(state) || edge.getEnd().equals(state)){
+				edges.remove(edge);
+			}
+		}
+	}
+
+	public State getStartState() {
+		return startState;
+	}
+	
+	public List<State> getEndState() {
+		List<State> result = new Vector<>();
+		for (State state : states) {
+			if(state.isEndState())
+				result.add(state);
+		}
+		return result;
+	}
+	
+}

@@ -1,0 +1,108 @@
+package lexer.fa;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import lexer.Tool;
+import lexer.re.REConverter;
+
+public class NFAConverter {
+	
+	private NFA nfa;
+	
+	public NFAConverter(NFA nfa) {
+		this.nfa = nfa;
+	}
+
+	public DFA toDFA() {
+		return null;
+	}
+	
+	public static void main(String[] args) {
+		NFA nfa = REConverter.REtoNFA("(a|b)*abb");
+		NFAConverter nfaConverter = new NFAConverter(nfa);
+		nfa.print();
+		nfaConverter.esClosure(nfaConverter.nfa.startState).print();
+	}
+	
+	private NFAStatesSet esClosure(NFAStatesSet set){
+		
+	}
+	
+	private NFAStatesSet esClosure(State state){
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		nfaStatesSet.add(state);
+		while(!isEnd(nfaStatesSet)){
+			NFAStatesSet set = new NFAStatesSet();
+			for (State state2 : nfaStatesSet) {
+				set.add(esClosureOneStep(state2));
+			}
+			nfaStatesSet.add(set);
+		}
+		return nfaStatesSet;
+	}
+	
+	private boolean isEnd(NFAStatesSet set){
+		for (State state : set) {
+			if(!esClosureOneStep(state).isSubSetOf(set))
+				return false;
+		}
+		return true;
+	}
+	
+	private NFAStatesSet esClosureOneStep(State state) {
+		NFAStatesSet nfaStatesSet = new NFAStatesSet();
+		for (Edge edge : state.getEdgesStart()) {
+			if(edge.getInput().equals(Edge.EMPTY_STRING)){
+				nfaStatesSet.add(edge.getEnd());
+			}
+		}
+		return nfaStatesSet;
+	}
+	
+	class NFAStatesSet implements Iterable<State>{
+		
+		List<State> states;
+		
+		NFAStatesSet() {
+			states = new Vector<>();
+		}
+		
+		void add(State state){
+			if(!states.contains(state)){
+				states.add(state);
+			}
+		}
+		
+		void add(NFAStatesSet set){
+			for (State state : set) {
+				if(!states.contains(state)){
+					states.add(state);
+				}
+			}
+		}
+		
+		boolean isSubSetOf(NFAStatesSet set){
+			for (State state : states) {
+				if(!set.states.contains(state))
+					return false;
+			}
+			return true;
+		}
+		
+		void print(){
+			for (State state : states) {
+				System.out.println(state);
+			}
+			Tool.printline();
+		}
+
+		@Override
+		public Iterator<State> iterator() {
+			return states.iterator();
+		}
+		
+	}
+	
+}

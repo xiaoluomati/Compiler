@@ -1,0 +1,52 @@
+package lexer.fa;
+
+import java.util.List;
+import java.util.Vector;
+
+public class NFA extends FA{
+	
+
+
+	public NFA(State startState) {
+		super(startState);
+	}
+
+	public static NFA getNFAOfSingleChar(char c) {
+		State s = new State(0+"");
+		State e = new State(1+"", true);
+		new Edge(c+"", s, e);
+		return new NFA(s);
+	}
+	
+	public NFA or(NFA nfa) {
+		State s = new State(0+"");
+		int i = 1;
+		for (State state : this.getStates()) {
+			state.setIdentity(i+"");
+			i++;
+		}
+		for (State state : nfa.getStates()) {
+			state.setIdentity(i+"");
+			i++;
+		}
+		State e = new State(i+"");
+		new Edge(s, this.getStartState());
+		new Edge(s, nfa.getStartState());
+		for (State state : this.getEndState()) {
+			state.setEndState(false);
+			new Edge(state, e);
+		}
+		for (State state : nfa.getEndState()) {
+			state.setEndState(false);
+			new Edge(state, e);
+		}
+		return new NFA(s);
+	}
+	
+	public NFA link(NFA nfa) {
+		int i = this.getNumberOfStates();
+		List<Edge> edges = nfa.getStartState().getEdgesStart();
+		Vector<State> states = new Vector<>();
+		
+	}
+}

@@ -1,0 +1,13 @@
+package lexer.fa;
+
+import java.util.Vector;
+
+public class State {
+
+	private String identity;
+	
+	private Vector<Edge> edgesStart;
+	
+	private Vector<Edge> edgesEnd;
+	
+}
